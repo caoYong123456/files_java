@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ej.files.dao.menu.MenuDaoMapper">
+
+    <resultMap id="BaseMap" type="com.ej.files.entity.menu.Menu">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="parent_id" jdbcType="VARCHAR" property="parentId"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="redirect" jdbcType="VARCHAR" property="redirect"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="meta" jdbcType="VARCHAR" property="metaStr"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <!-- 查询列表-->
+    <select id="menuList" resultMap="BaseMap"  parameterType="com.ej.files.entity.menu.Menu">
+        select  * from t_menu
+        where delete_flag = 0
+        order by update_time desc
+    </select>
+
+    <!-- 菜单查询-->
+    <select id="getMenuList" resultMap="BaseMap" parameterType="java.lang.Integer">
+        select
+            m.id,
+            m.parent_id,
+            m.path,
+            m.component,
+            m.redirect,
+            m.`name`,
+            m.meta
+        from t_menu m
+        where m.parent_id=0 and m.delete_flag=0
+    </select>
+
+    <select id="getChildrenMenuList" resultMap="BaseMap" parameterType="java.lang.String">
+        select
+            m.path,
+            m.component,
+            m.redirect,
+            m.`name`,
+            m.meta
+        from t_menu m
+        where m.parent_id=#{parentId} and m.delete_flag=0
+    </select>
+</mapper>

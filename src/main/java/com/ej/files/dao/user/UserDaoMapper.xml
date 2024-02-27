@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ej.files.dao.user.UserDaoMapper">
+
+    <resultMap id="BaseMap" type="com.ej.files.entity.user.User">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="nike_name" jdbcType="VARCHAR" property="nikeName"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <select id="queryUser" resultMap="BaseMap" >
+        select  id,user_name,password,create_time
+        from t_user
+        where user_name = #{userName,jdbcType=VARCHAR} and password = #{password,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据主键查询-->
+    <select id="getById" resultMap="BaseMap" parameterType="java.lang.String" >
+        select  *
+        from t_user
+        where id = #{id}
+    </select>
+
+    <!-- 查询列表-->
+    <select id="getList" resultMap="BaseMap"  parameterType="com.ej.files.entity.user.User">
+        select  * from t_user
+        where delete_flag = 0
+        <if test="userName != null">
+            and user_name like CONCAT('%', #{userName,jdbcType=VARCHAR},'%') ESCAPE '/'
+        </if>
+        order by update_time desc
+    </select>
+    <!-- 保存-->
+    <insert id="save" parameterType="com.ej.files.entity.user.User" >
+        insert into  t_user(
+        <if test="userCode != null">
+            `user_code`,
+        </if>
+        <if test="userName != null">
+            `user_name`,
+        </if>
+        <if test="nikeName != null">
+            `nike_name`,
+        </if>
+        <if test="mobile != null">
+            `mobile`,
+        </if>
+        <if test="userType != null">
+            `user_type`,
+        </if>
+        <if test="createTime != null">
+            `create_time`,
+        </if>
+        <if test="updateTime != null">
+            `update_time`,
+        </if>
+        <if test="deleteFlag != null">
+            `delete_flag`,
+        </if>
+        <if test="password != null">
+            `password`
+        </if>
+        )
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="userCode != null" >
+                #{userCode,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null" >
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="nikeName != null" >
+                #{nikeName,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null" >
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="userType != null">
+                #{userType,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+    <!-- 更新-->
+    <update id="update" parameterType="com.ej.files.entity.user.User" >
+        update
+            t_user
+        set
+            `user_code`=#{userCode},
+            `user_name`=#{userName},
+            `nike_name`=#{nikeName},
+            `mobile`=#{mobile}
+        where id=#{id}
+    </update>
+    <!-- 删除-->
+    <update id="delete" parameterType="java.lang.String" >
+        delete from t_user where id=#{id}
+    </update>
+
+</mapper>
